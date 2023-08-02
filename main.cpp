@@ -7,14 +7,16 @@
 #include "Materials/MaterialVariants/DiffuseMaterial.h"
 
 int main() {
-    Raytracer::BlinnPhongMaterial blinnPhongMaterial(Raytracer::Vec3(0.8, 0.3, 0.3), 0.9, 0.2, 2);
+    std::cout << "Renderer initializing..." << std::endl;
+
+    Raytracer::BlinnPhongMaterial blinnPhongMaterial(Raytracer::Vec3(0.8, 0.3, 0.3), 0.9, 0.2, 200);
     Raytracer::DiffuseMaterial diffuseMaterial(Raytracer::Vec3(0.8, 0.3, 0.3), 0.8);
     Raytracer::Vec3 pos(0, 0, 1);
     std::shared_ptr<Raytracer::Sphere> sphere = std::make_shared<Raytracer::Sphere>(&blinnPhongMaterial, pos, 0.3);
     // std::shared_ptr<Raytracer::Sphere> sphere = std::make_shared<Raytracer::Sphere>(&diffuseMaterial, pos, 0.3);
 
     std::shared_ptr<Raytracer::PointLight> pointLight =
-            std::make_shared<Raytracer::PointLight>(Raytracer::Vec3(0.5, 0.5, 0.5), Raytracer::Vec3(1, 1, 1), 10.0);
+            std::make_shared<Raytracer::PointLight>(Raytracer::Vec3(0.5, 0.5, 0.5), Raytracer::Vec3(1, 1, 1), 2.0);
 
     Raytracer::Vec3 position(0, 0, 0);
     Raytracer::Vec3 orientation(0, 0, 1);
@@ -25,10 +27,13 @@ int main() {
     Raytracer::Scene scene(camera);
     scene.addObject(sphere);
     scene.addLight(pointLight);
-    scene.setAmbientLight(Raytracer::Vec3(0.2, 0.2, 0.2));
+    scene.setAmbientLight(Raytracer::Vec3(0.5, 0.5, 0.5));
 
-    Raytracer::Renderer renderer(scene);
+    std::cout << "Scene built successfully. Starting rendering..." << std::endl;
+
+    Raytracer::Renderer renderer(2400, 1800, scene);
     renderer.render();
-    std::cout << "1";
+
+    std::cout << "Finished Rendering.";
 }
 

@@ -6,8 +6,8 @@
 
 namespace Raytracer {
     void Renderer::render() const {
-        int width = 1200;
-        int height = 900;
+        int width = w;
+        int height = h;
 
         std::vector<unsigned char> pixels(width * height * 3);
 

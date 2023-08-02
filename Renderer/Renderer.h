@@ -11,12 +11,14 @@ namespace Raytracer {
 
     class Renderer {
     public:
-        explicit Renderer(const Scene& scene) : scene(scene) {}
+        explicit Renderer(int w, int h, const Scene& scene) : w(w), h(h), scene(scene) {}
 
         void render() const;
 
     private:
         const Scene& scene;
+        int w;
+        int h;
 
         Vec3 calculateColor(const Ray& ray, const HitInfo& hitInfo) const;
     };
