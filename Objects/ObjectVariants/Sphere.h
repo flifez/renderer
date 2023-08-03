@@ -15,7 +15,7 @@ namespace Raytracer {
                                                                          position(position),
                                                                          radius(radius) {}
 
-        HitInfo intersect(const Ray& ray) const override;
+        HitInfo intersect(const Ray& ray, int depth) const override;
     private:
         Vec3 position;
         float radius;

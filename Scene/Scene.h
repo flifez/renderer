@@ -25,7 +25,7 @@ namespace Raytracer {
         BasicCamera getCamera() const;
         const Vec3& getAmbientLight() const;
 
-        HitInfo findClosestIntersection(const Ray& ray) const;
+        HitInfo findClosestIntersection(const Ray& ray, int depth) const;
     private:
         BasicCamera camera;
         std::vector<std::shared_ptr<Object>> objects;

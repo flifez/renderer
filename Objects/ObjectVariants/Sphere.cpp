@@ -5,7 +5,7 @@
 #include "Sphere.h"
 
 namespace Raytracer {
-    HitInfo Sphere::intersect(const Ray& ray) const {
+    HitInfo Sphere::intersect(const Ray& ray, int depth) const {
         Vec3 oc = ray.origin - position;
         float a = Vec3::dot(ray.direction, ray.direction);
         float b = 2.0f * Vec3::dot(oc, ray.direction);
@@ -18,7 +18,7 @@ namespace Raytracer {
             float t = (-b - std::sqrt(discriminant)) / (2.0f * a);
             Vec3 point = ray.at(t);
             Vec3 normal = (point - position).normalize();
-            return {t, point, normal, Raytracer::Sphere::getMaterial(), MAX_DEPTH};
+            return {t, point, normal, Raytracer::Sphere::getMaterial(), depth};
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Raytracer {
     Ray Ray::reflect(const Vec3& point, const Vec3& normal) const {
         Vec3 reflectedDirection = direction.reflect(normal);
         Ray reflectedRay;
-        reflectedRay.setDirection(reflectedDirection);
+        reflectedRay.setDirection(-reflectedDirection);
         reflectedRay.setOrigin(point);
         return reflectedRay;
     }

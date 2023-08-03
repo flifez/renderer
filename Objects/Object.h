@@ -35,7 +35,7 @@ namespace Raytracer {
 
         std::shared_ptr<Material> getMaterial() const;
 
-        virtual HitInfo intersect(const Ray& ray) const = 0; // to be implemented
+        virtual HitInfo intersect(const Ray& ray, int depth) const = 0; // to be implemented
 
     private:
         std::shared_ptr<Material> material;

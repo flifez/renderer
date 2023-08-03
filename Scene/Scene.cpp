@@ -33,10 +33,10 @@ namespace Raytracer {
         return ambientLight;
     }
 
-    HitInfo Scene::findClosestIntersection(const Ray &ray) const {
+    HitInfo Scene::findClosestIntersection(const Ray &ray, int depth) const {
         HitInfo closestHitInfo(INFINITY, Vec3(), Vec3(), nullptr, MAX_DEPTH);
         for (std::shared_ptr<Object> object : objects) {
-            HitInfo hitInfo = object->intersect(ray);
+            HitInfo hitInfo = object->intersect(ray, depth);
             if (hitInfo.t < closestHitInfo.t) {
                 closestHitInfo = hitInfo;
             }

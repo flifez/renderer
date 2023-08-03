@@ -18,7 +18,7 @@ namespace Raytracer {
                 float u = float(x) / (width - 1);
                 float v = float(y) / (height - 1);
                 Ray ray = scene.getCamera().generateRay(u, v);
-                HitInfo hitInfo = scene.findClosestIntersection(ray);
+                HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
 
                 if (hitInfo.material == nullptr) {
                     Vec3 color = scene.getAmbientLight();
@@ -48,7 +48,7 @@ namespace Raytracer {
         for (const std::shared_ptr<Light>& light : scene.getLights()) {
             Vec3 lightDirection = light->getDirection(hitInfo.point);
             Vec3 viewDirection = scene.getCamera().getDirection(hitInfo.point);
-            Vec3 lightIntensity = light->getIntensity(hitInfo.point);
+            Vec3 lightIntensity = light->getIntensity(hitInfo.point) + scene.getAmbientLight();
             Vec3 lightColor = light->getColor();
             color = color + hitInfo.material->shade(lightDirection,
                                                     viewDirection,
@@ -57,24 +57,22 @@ namespace Raytracer {
                                                     lightIntensity);
         }
 
-        color = color + scene.getAmbientLight() * hitInfo.material->getColor();  // Add ambient light
+        const_cast<HitInfo&>(hitInfo).depth++;
 
         // recursive raytracing: if we have not reached the maximum recursion depth (MAX_DEPTH), and the material is reflective or refractive, then we calculate the color of the reflected or refracted ray
         if (hitInfo.depth < MAX_DEPTH && (hitInfo.material->isReflective() || hitInfo.material->isRefractive())) {
             Ray reflectedRay = ray.reflect(hitInfo.point, hitInfo.normal);
             Ray refractedRay = ray.refract(hitInfo.point, hitInfo.normal, hitInfo.material->getRefractiveIndex());
 
-            HitInfo reflectedHitInfo = scene.findClosestIntersection(reflectedRay);
-            HitInfo refractedHitInfo = scene.findClosestIntersection(refractedRay);
+            HitInfo reflectedHitInfo = scene.findClosestIntersection(reflectedRay, hitInfo.depth);
+            HitInfo refractedHitInfo = scene.findClosestIntersection(refractedRay, hitInfo.depth);
 
-            if (hitInfo.material->isReflective() && reflectedHitInfo.material != nullptr) {
+            if (hitInfo.material->isReflective() && reflectedHitInfo.material != nullptr && reflectedHitInfo.material != hitInfo.material){ // quick fix; TODO: switch to epsilon offsetting
                 color = color + calculateColor(reflectedRay, reflectedHitInfo) * hitInfo.material->getReflectivity();
-                const_cast<HitInfo&>(hitInfo).depth++;
             }
 
             if (hitInfo.material->isRefractive() && refractedHitInfo.material != nullptr) {
                 color = color + calculateColor(refractedRay, refractedHitInfo) * hitInfo.material->getTransparency();
-                const_cast<HitInfo&>(hitInfo).depth++;
             }
         }
 

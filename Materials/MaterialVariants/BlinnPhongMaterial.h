@@ -14,6 +14,8 @@ namespace Raytracer {
 
         Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity) const override;
 
+        bool isReflective() override { return reflective; }
+        bool isRefractive() const override { return refractive; }
 
     private:
         Vec3 color;
