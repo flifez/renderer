@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include "mathutil.h"
+#include "constants.h"
 
 namespace Raytracer {
     struct Vec3 {
@@ -23,13 +24,12 @@ namespace Raytracer {
         Vec3 operator-() const; // negate
 
         static bool isParallel(Vec3 &a, Vec3 &b);
-
         double magnitude() const;
-
         Vec3 absComponents(); // make all components positive
         Vec3 negate() const;
-
         Vec3 normalize(); // convert to unit vector
+
+        Vec3 reflect(const Vec3 &normal) const; // reflect vector about normal
 
         double x{}, y{}, z{};
 
@@ -42,5 +42,7 @@ namespace Raytracer {
         Vec3 operator*(double d) const;
 
         Vec3 operator/(double d) const;
+
+        Vec3 refract(const Vec3& v, double indexOfRefraction) const;
     };
 }

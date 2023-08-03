@@ -34,7 +34,7 @@ namespace Raytracer {
     }
 
     HitInfo Scene::findClosestIntersection(const Ray &ray) const {
-        HitInfo closestHitInfo(INFINITY, Vec3(), Vec3(), nullptr);
+        HitInfo closestHitInfo(INFINITY, Vec3(), Vec3(), nullptr, MAX_DEPTH);
         for (std::shared_ptr<Object> object : objects) {
             HitInfo hitInfo = object->intersect(ray);
             if (hitInfo.t < closestHitInfo.t) {

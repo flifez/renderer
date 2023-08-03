@@ -13,12 +13,14 @@ namespace Raytracer {
                 : color(color), diffuse(diffuse), specular(specular), shininess(shininess) {}
 
         Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity) const override;
-        Vec3 getColor() const override;
+
 
     private:
         Vec3 color;
         float diffuse;
         float specular;
         float shininess;
+        bool reflective = true;
+        bool refractive = false;
     };
 } // Raytracer

@@ -8,9 +8,9 @@
 
 namespace Raytracer {
 
-    struct Ray {
-        Vec3 origin, direction;
-
+    class Ray {
+    public:
+        Ray() = default;
         Ray(const Vec3 &origin, Vec3 direction) : origin(origin), direction(direction) {
             direction.normalize();
         }
@@ -18,5 +18,10 @@ namespace Raytracer {
         Vec3 at(double t) const;
         void setDirection(const Vec3 &dir);
         void setOrigin(const Vec3 &origin);
+
+        Ray reflect(const Vec3& point, const Vec3& normal) const;
+        Ray refract(const Vec3& point, const Vec3& normal, double indexOfRefraction) const;
+
+        Vec3 origin, direction;
     };
 }

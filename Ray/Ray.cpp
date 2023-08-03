@@ -18,4 +18,20 @@ namespace Raytracer {
     void Ray::setOrigin(const Vec3 &ori) {
         origin = ori;
     }
+
+    Ray Ray::reflect(const Vec3& point, const Vec3& normal) const {
+        Vec3 reflectedDirection = direction.reflect(normal);
+        Ray reflectedRay;
+        reflectedRay.setDirection(reflectedDirection);
+        reflectedRay.setOrigin(point);
+        return reflectedRay;
+    }
+
+    Ray Ray::refract(const Vec3& point, const Vec3& normal, double indexOfRefraction) const {
+        Vec3 refractedDirection = direction.refract(normal, indexOfRefraction);
+        Ray refractedRay;
+        refractedRay.setDirection(refractedDirection);
+        refractedRay.setOrigin(point);
+        return refractedRay;
+    }
 }

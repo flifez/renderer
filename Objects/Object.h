@@ -18,7 +18,14 @@ namespace Raytracer {
         Vec3 normal;
         std::shared_ptr<Material> material;
 
-        HitInfo(float t, const Vec3& point, const Vec3& normal, std::shared_ptr<Material> material) : t(t), point(point), normal(normal), material(std::move(material)) {}
+        int depth = 0;
+
+        HitInfo(float t, const Vec3& point, const Vec3& normal, std::shared_ptr<Material> material, int depth) :
+        t(t),
+        point(point),
+        normal(normal),
+        material(std::move(material)),
+        depth(depth) {}
     };
 
     class Object {

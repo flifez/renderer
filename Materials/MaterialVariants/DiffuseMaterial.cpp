@@ -10,9 +10,4 @@ namespace Raytracer {
         Vec3 diffuseColor = lightColor * color * lightIntensity * diffuse * diffuseIntensity;
         return diffuseColor;
     }
-
-
-    Vec3 DiffuseMaterial::getColor() const {
-        return color;
-    }
 } // Raytracer

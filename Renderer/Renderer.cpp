@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 //
 // Created by flif3 on 8/2/2023.
 //
@@ -33,11 +35,6 @@ namespace Raytracer {
                     pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
                     pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
                     pixels[(y * width + x) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
-
-                    //pixels[(x * height + y) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
-                    //pixels[(x * height + y) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
-                    //pixels[(x * height + y) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
-
                 }
             }
         }
@@ -62,7 +59,27 @@ namespace Raytracer {
 
         color = color + scene.getAmbientLight() * hitInfo.material->getColor();  // Add ambient light
 
+        // recursive raytracing: if we have not reached the maximum recursion depth (MAX_DEPTH), and the material is reflective or refractive, then we calculate the color of the reflected or refracted ray
+        if (hitInfo.depth < MAX_DEPTH && (hitInfo.material->isReflective() || hitInfo.material->isRefractive())) {
+            Ray reflectedRay = ray.reflect(hitInfo.point, hitInfo.normal);
+            Ray refractedRay = ray.refract(hitInfo.point, hitInfo.normal, hitInfo.material->getRefractiveIndex());
+
+            HitInfo reflectedHitInfo = scene.findClosestIntersection(reflectedRay);
+            HitInfo refractedHitInfo = scene.findClosestIntersection(refractedRay);
+
+            if (hitInfo.material->isReflective() && reflectedHitInfo.material != nullptr) {
+                color = color + calculateColor(reflectedRay, reflectedHitInfo) * hitInfo.material->getReflectivity();
+                const_cast<HitInfo&>(hitInfo).depth++;
+            }
+
+            if (hitInfo.material->isRefractive() && refractedHitInfo.material != nullptr) {
+                color = color + calculateColor(refractedRay, refractedHitInfo) * hitInfo.material->getTransparency();
+                const_cast<HitInfo&>(hitInfo).depth++;
+            }
+        }
+
         return color;
     }
 
 } // Raytracer
+#pragma clang diagnostic pop

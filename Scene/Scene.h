@@ -13,7 +13,7 @@ namespace Raytracer {
 
     class Scene {
     public:
-        Scene(const BasicCamera& camera) : camera(camera) {}
+        explicit Scene(const BasicCamera& camera) : camera(camera) {}
 
         void addObject(std::shared_ptr<Object> object);
         void addLight(std::shared_ptr<Light> light);

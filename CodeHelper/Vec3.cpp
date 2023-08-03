@@ -70,6 +70,10 @@ namespace Raytracer {
         return {0, 0, 0};
     }
 
+    Vec3 Vec3::reflect(const Raytracer::Vec3& normal) const {
+        return *this - normal * dot(*this, normal) * 2;
+    }
+
     Vec3 Vec3::operator+(const Vec3 &a) const {
         return {x + a.x, y + a.y, z + a.z};
     }
@@ -110,5 +114,15 @@ namespace Raytracer {
         Vec3 diff = a - b;
         return (epsilonComparison(diff.x, epsilon) && epsilonComparison(diff.y, epsilon) &&
                 epsilonComparison(diff.z, epsilon));
+    }
+
+    Vec3 Vec3::refract(const Vec3& v, double indexOfRefraction) const {
+        Vec3 uv = v;
+        double dt = dot(uv.normalize(), *this);
+        double discriminant = 1.0 - indexOfRefraction * indexOfRefraction * (1 - dt * dt);
+        if (discriminant > 0) {
+            return (uv.normalize() - *this * dt) * indexOfRefraction - *this * std::sqrt(discriminant);
+        }
+        return {0, 0, 0};
     }
 }

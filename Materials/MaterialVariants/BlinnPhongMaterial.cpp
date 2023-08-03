@@ -2,7 +2,7 @@
 // Created by flif3 on 8/2/2023.
 //
 
-#include "BlingPhongMaterial.h"
+#include "BlinnPhongMaterial.h"
 
 namespace Raytracer {
 
@@ -16,10 +16,5 @@ namespace Raytracer {
         Vec3 specularColor = lightColor * specular * specularIntensity * lightIntensity;
 
         return diffuseColor + specularColor;
-    }
-
-
-    Vec3 BlinnPhongMaterial::getColor() const {
-        return color;
     }
 } // Raytracer

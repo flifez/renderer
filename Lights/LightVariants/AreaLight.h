@@ -8,21 +8,26 @@
 
 namespace Raytracer {
 
-    class AreaLight {
-        AreaLight(const Vec3& topLeftCorner, const Vec3& bottomRightCorner, const Vec3& color, float intensity) :
-        topLeftCorner(topLeftCorner),
-        bottomRightCorner(bottomRightCorner),
+    class AreaLight : public Light {
+    public:
+        AreaLight(const Vec3& position, const Vec3& normal, const Vec3& color, float intensity, float width, float height) :
+        position(position),
+        normal(normal),
         color(color),
-        intensity(intensity) {}
+        intensity(intensity),
+        width(width),
+        height(height) {}
 
-        // implement
+        Vec3 getDirection(const Vec3& point) const override;
+        Vec3 getIntensity(const Vec3& point) const override;
+        Vec3 getColor() const override;
 
     private:
-        // "top left" and "bottom right": relative to the light side
-        Vec3 topLeftCorner;
-        Vec3 bottomRightCorner;
+        Vec3 position;
+        Vec3 normal;
         Vec3 color;
         float intensity;
+        float width, height;
     };
 
 } // Raytracer
