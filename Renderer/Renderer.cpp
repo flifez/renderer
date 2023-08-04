@@ -21,7 +21,7 @@ namespace Raytracer {
                 HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
 
                 if (hitInfo.material == nullptr) {
-                    Vec3 color = scene.getAmbientLight();
+                    Vec3 color = scene.getAmbient();
 
                     pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
                     pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
@@ -48,14 +48,17 @@ namespace Raytracer {
         for (const std::shared_ptr<Light>& light : scene.getLights()) {
             Vec3 lightDirection = light->getDirection(hitInfo.point);
             Vec3 viewDirection = scene.getCamera().getDirection(hitInfo.point);
-            Vec3 lightIntensity = light->getIntensity(hitInfo.point) + scene.getAmbientLight();
+            Vec3 lightIntensity = light->getIntensity(hitInfo.point);
             Vec3 lightColor = light->getColor();
             color = color + hitInfo.material->shade(lightDirection,
                                                     viewDirection,
                                                     hitInfo.normal,
                                                     lightColor,
-                                                    lightIntensity);
+                                                    lightIntensity,
+                                                    scene.getAmbient());
         }
+
+        // add ambient light
 
         const_cast<HitInfo&>(hitInfo).depth++;
 
@@ -67,7 +70,7 @@ namespace Raytracer {
             HitInfo reflectedHitInfo = scene.findClosestIntersection(reflectedRay, hitInfo.depth);
             HitInfo refractedHitInfo = scene.findClosestIntersection(refractedRay, hitInfo.depth);
 
-            if (hitInfo.material->isReflective() && reflectedHitInfo.material != nullptr && reflectedHitInfo.material != hitInfo.material){ // quick fix; TODO: switch to epsilon offsetting
+            if (hitInfo.material->isReflective() && reflectedHitInfo.material != nullptr && reflectedHitInfo.material != hitInfo.material){ // quick fix; TODO: use epsilon offsetting
                 color = color + calculateColor(reflectedRay, reflectedHitInfo) * hitInfo.material->getReflectivity();
             }
 

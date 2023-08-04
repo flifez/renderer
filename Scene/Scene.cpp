@@ -25,12 +25,12 @@ namespace Raytracer {
         return camera;
     }
 
-    void Scene::setAmbientLight(const Vec3& ambLight) {
-        this->ambientLight = ambLight;
+    void Scene::setAmbient(const Vec3& ambColor, float ambIntensity) {
+        this->ambient = ambColor * ambIntensity;
     }
 
-    const Vec3& Scene::getAmbientLight() const {
-        return ambientLight;
+    const Vec3& Scene::getAmbient() const {
+        return ambient;
     }
 
     HitInfo Scene::findClosestIntersection(const Ray &ray, int depth) const {

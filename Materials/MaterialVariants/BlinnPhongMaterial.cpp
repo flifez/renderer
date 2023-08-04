@@ -6,7 +6,7 @@
 
 namespace Raytracer {
 
-    Vec3 BlinnPhongMaterial::shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity) const {
+    Vec3 BlinnPhongMaterial::shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity, const Vec3& ambient) const {
         Vec3 halfVector = (-lightDirection + viewDirection).normalize();
 
         double diffuseIntensity = std::max(0.0f, float(Vec3::dot(normal, -lightDirection)));
@@ -15,6 +15,6 @@ namespace Raytracer {
         Vec3 diffuseColor = lightColor * color * diffuse * diffuseIntensity * lightIntensity;
         Vec3 specularColor = lightColor * specular * specularIntensity * lightIntensity;
 
-        return diffuseColor + specularColor;
+        return ambient * color + diffuseColor + specularColor;
     }
 } // Raytracer

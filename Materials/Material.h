@@ -11,7 +11,12 @@ namespace Raytracer {
     class Material {
     public:
         virtual ~Material() = default;
-        virtual Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity) const = 0;
+        virtual Vec3 shade(const Vec3& lightDirection,
+                           const Vec3& viewDirection,
+                           const Vec3& normal,
+                           const Vec3& lightColor,
+                           const Vec3& lightIntensity,
+                           const Vec3& ambientColor) const = 0;
         virtual Vec3 getColor() { return color; };
         virtual bool isReflective() = 0;
         virtual bool isRefractive() const = 0;
@@ -20,8 +25,6 @@ namespace Raytracer {
         virtual float getTransparency() const { return 0; }
 
     protected:
-        bool reflective;
-        bool refractive;
         Vec3 color;
     };
 

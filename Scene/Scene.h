@@ -17,20 +17,22 @@ namespace Raytracer {
 
         void addObject(std::shared_ptr<Object> object);
         void addLight(std::shared_ptr<Light> light);
-        void setAmbientLight(const Vec3& ambientLight);
+        void setAmbient(const Vec3& ambientColor, float ambientIntensity);
 
 
         const std::vector<std::shared_ptr<Object>>& getObjects() const;
         const std::vector<std::shared_ptr<Light>>& getLights() const;
         BasicCamera getCamera() const;
-        const Vec3& getAmbientLight() const;
+        const Vec3& getAmbient() const;
 
         HitInfo findClosestIntersection(const Ray& ray, int depth) const;
     private:
         BasicCamera camera;
         std::vector<std::shared_ptr<Object>> objects;
         std::vector<std::shared_ptr<Light>> lights;
-        Vec3 ambientLight;
+        Vec3 ambientColor;
+        float ambientIntensity;
+        Vec3 ambient;
     };
 
 } // Raytracer

@@ -12,7 +12,7 @@ namespace Raytracer {
     public:
         DiffuseMaterial(const Vec3& color, float diffuse) : color(color), diffuse(diffuse) {}
 
-        Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity) const override;
+        Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity, const Vec3& ambientColor) const override;
 
         bool isReflective() override { return reflective; }
         bool isRefractive() const override { return refractive; }
