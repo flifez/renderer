@@ -19,9 +19,13 @@ namespace Raytracer {
         void setDirection(const Vec3 &dir);
         void setOrigin(const Vec3 &origin);
 
+        Vec3 getDirection() const { return direction; }
+        Vec3 getOrigin() const { return origin; }
+
         Ray reflect(const Vec3& point, const Vec3& normal) const;
         Ray refract(const Vec3& point, const Vec3& normal, double indexOfRefraction) const;
 
+    private:
         Vec3 origin, direction;
     };
 }

@@ -20,6 +20,8 @@ namespace Raytracer {
 
         int depth = 0;
 
+        HitInfo() : t(INFINITY), point(Vec3()), normal(Vec3()), material(nullptr), depth(MAX_DEPTH) {}
+
         HitInfo(float t, const Vec3& point, const Vec3& normal, std::shared_ptr<Material> material, int depth) :
         t(t),
         point(point),
@@ -35,7 +37,7 @@ namespace Raytracer {
 
         std::shared_ptr<Material> getMaterial() const;
 
-        virtual HitInfo intersect(const Ray& ray, int depth) const = 0; // to be implemented
+        virtual HitInfo intersect(const Ray& ray, int depth) const = 0;
 
     private:
         std::shared_ptr<Material> material;

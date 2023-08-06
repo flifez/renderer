@@ -2,6 +2,9 @@
 // Created by flif3 on 8/2/2023.
 //
 
+#define _USE_MATH_DEFINES // VS Code specific
+#include <cmath>
+
 #include "AreaLight.h"
 #include <random>
 
