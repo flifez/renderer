@@ -16,6 +16,10 @@ namespace Raytracer {
         Vec3 getV1() const { return v1; }
         Vec3 getV2() const { return v2; }
 
+        void setV0(const Vec3& v) { v0 = v; }
+        void setV1(const Vec3& v) { v1 = v; }
+        void setV2(const Vec3& v) { v2 = v; }
+
     private:
         Vec3 v0, v1, v2;
     };

@@ -9,7 +9,7 @@
 namespace Raytracer {
     class BasicCamera {
     public:
-        BasicCamera(const Vec3 &position, const Vec3 &orientation, float fov, float aspectRatio) : position(position), orientation(orientation),
+        BasicCamera(const Vec3 &position, const Vec3 &orientation, float fov, float aspectRatio) : position(position), orientation(-orientation),
                                                                           fov(fov), aspectRatio(aspectRatio) {}
 
         Ray generateRay(float x, float y) const;

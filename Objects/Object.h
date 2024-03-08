@@ -32,6 +32,7 @@ namespace Raytracer {
 
     class Object {
     public:
+        // Object() = default;
         explicit Object(std::shared_ptr<Material> material) : material(std::move(material)) {}
         virtual ~Object() = default;
 

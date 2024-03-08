@@ -26,6 +26,8 @@ namespace Raytracer {
         std::vector<unsigned char> pixels(width * height * 3);
 
         for (int y = 0; y < height; y++) {
+            std::cout << "Rendering line " << y << " of " << height << std::endl;
+
             for (int x = 0; x < width; x++) {
                 float u = float(x) / (width - 1);
                 float v = float(y) / (height - 1);

@@ -10,7 +10,13 @@ namespace Raytracer {
         float scale = std::tan(fov * 0.5);
         float imageX = (2 * x - 1) * scale;
         float imageY = (1 - 2 * y) * scale * aspectRatio;
-        Vec3 direction = Vec3(imageX, imageY, -1).normalize();
+
+        double orientationX = orientation.x;
+        double orientationY = orientation.y;
+        double orientationZ = orientation.z;
+
+        Vec3 direction = Vec3(imageX - orientationX, imageY - orientationY, -orientationZ).normalize();
+        // std::cout << direction.x << direction.y << direction.z << std::endl;
         return {position, direction};
     }
 
