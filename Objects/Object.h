@@ -8,6 +8,7 @@
 #include <utility>
 #include "../Materials/Material.h"
 #include "../Ray/Ray.h"
+#include "../Structures/AABB.h"
 
 namespace Raytracer {
 
@@ -37,7 +38,7 @@ namespace Raytracer {
         virtual ~Object() = default;
 
         std::shared_ptr<Material> getMaterial() const;
-
+        virtual AABB getBoundingBox() const = 0;
         virtual HitInfo intersect(const Ray& ray, int depth) const = 0;
 
     private:

@@ -9,7 +9,7 @@
 namespace Raytracer {
     class BlinnPhongMaterial : public Material {
     public:
-        BlinnPhongMaterial(const Vec3& color, float diffuse, float specular, float shininess)
+        BlinnPhongMaterial(const Vec3& color, float diffuse, float specular, float shininess, int i)
                 : color(color), diffuse(diffuse), specular(specular), shininess(shininess) {}
 
         Vec3 shade(const Vec3& lightDirection, const Vec3& viewDirection, const Vec3& normal, const Vec3& lightColor, const Vec3& lightIntensity, const Vec3& ambientColor) const override;

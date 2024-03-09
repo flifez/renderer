@@ -10,12 +10,13 @@
 
 namespace Raytracer {
 
-    class Mesh : public Object {
+    class Mesh : public Object  {
     public:
         Mesh() = default;
         Mesh(std::vector<Triangle> triangles, Material* material) : triangles(std::move(triangles)), Object(static_cast<std::shared_ptr<Material>>(material)) {}
         void addTriangle(const Triangle& triangle);
         const Triangle& getTriangle(int index) const;
+        std::vector<Vec3> getVertices() const;
         int numberOfTriangles() const;
         void scale(float factor);
 
@@ -23,6 +24,7 @@ namespace Raytracer {
 
         HitInfo intersectTriangle(const Ray& ray, const Triangle& triangle, int depth) const;
         HitInfo intersect(const Ray& ray, int depth) const override;
+        AABB getBoundingBox() const override;
 
     private:
         std::vector<Triangle> triangles;

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "mathutil.h"
 #include "constants.h"
+#include <random>
 
 namespace Raytracer {
     struct Vec3 {
@@ -43,6 +44,10 @@ namespace Raytracer {
 
         Vec3 operator/(double d) const;
 
+        std::ostream &operator<<(std::ostream &os) const;
+
         Vec3 refract(const Vec3& v, double indexOfRefraction) const;
+
+        static Vec3 random(double min, double max) ;
     };
 }

@@ -2,9 +2,8 @@
 // Created by flif3 on 8/2/2023.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "misc-no-recursion"
 
+#include <random>
 #include "Renderer.h"
 
 namespace Raytracer {
@@ -19,9 +18,16 @@ namespace Raytracer {
         color.z = std::min(color.z, 1.0);
     }
 
+    float random_float() {
+        static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+        static std::mt19937 generator;
+        return distribution(generator);
+    }
+
     void Renderer::render() const {
         int width = w;
         int height = h;
+        const int SAMPLES_PER_PIXEL = 4;
 
         std::vector<unsigned char> pixels(width * height * 3);
 
@@ -29,34 +35,32 @@ namespace Raytracer {
             std::cout << "Rendering line " << y << " of " << height << std::endl;
 
             for (int x = 0; x < width; x++) {
-                float u = float(x) / (width - 1);
-                float v = float(y) / (height - 1);
-                Ray ray = scene.getCamera().generateRay(u, v);
-                HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
+                Vec3 color(0, 0, 0);
 
-                if (hitInfo.material == nullptr) {
-                    Vec3 color = scene.getAmbient();
+                for (int s = 0; s < SAMPLES_PER_PIXEL; s++) {
+                    float u = (x + random_float()) / (width - 1);
+                    float v = (y + random_float()) / (height - 1);
+                    Ray ray = scene.getCamera().generateRay(u, v);
+                    HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
 
-                    // clamp colors
-                    clampColor(color);
-
-                    pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
-                    pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
-                    pixels[(y * width + x) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
-
-                } else if (hitInfo.material != nullptr) {
-                    Vec3 color = calculateColor(ray, hitInfo);
-
-                    // gamma correction.
-                    color = adjustGamma(color, 1.0f);
-
-                    clampColor(color);
-
-                    // convert color from float to byte
-                    pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
-                    pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
-                    pixels[(y * width + x) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
+                    if (hitInfo.material == nullptr) {
+                        color = color + scene.getAmbient();
+                    } else {
+                        color = color + calculateColor(ray, hitInfo);
+                    }
                 }
+
+                color = color / float(SAMPLES_PER_PIXEL);
+
+                // gamma correction.
+                color = adjustGamma(color, 1.0f);
+
+                clampColor(color);
+
+                // convert color from float to byte
+                pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
+                pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
+                pixels[(y * width + x) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
             }
         }
 
@@ -107,5 +111,3 @@ namespace Raytracer {
     }
 
 } // Raytracer
-
-#pragma clang diagnostic pop

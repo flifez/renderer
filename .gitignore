@@ -31,7 +31,11 @@
 *.out
 *.app
 
-cmake-build-debug
+cmake-build-*
 testcases.cpp
 build
 /backup.cpp
+/Resources/stanford-bunny.obj
+.vscode
+.idea
+

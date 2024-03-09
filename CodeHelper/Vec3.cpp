@@ -106,10 +106,6 @@ namespace Raytracer {
         return !(a == b);
     }
 
-    std::ostream &operator<<(std::ostream &os, const Vec3 &a) {
-        return os << "[" << a.x << ", " << a.y << ", " << a.z << "]";
-    }
-
     bool Vec3::areVec3Equal(const Vec3 &a, const Vec3 &b, double epsilon) {
         Vec3 diff = a - b;
         return (epsilonComparison(diff.x, epsilon) && epsilonComparison(diff.y, epsilon) &&
@@ -124,5 +120,17 @@ namespace Raytracer {
             return (uv.normalize() - *this * dt) * indexOfRefraction - *this * std::sqrt(discriminant);
         }
         return {0, 0, 0};
+    }
+
+    Vec3 Vec3::random(double min, double max) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<double> dis(min, max);
+
+        return {dis(gen), dis(gen), dis(gen)};
+    }
+
+    std::ostream& Vec3::operator<<(std::ostream& os) const {
+        return os << "[" << this->x << ", " << this->y << ", " << this->z << "]";
     }
 }

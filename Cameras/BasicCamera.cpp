@@ -17,11 +17,28 @@ namespace Raytracer {
 
         Vec3 direction = Vec3(imageX - orientationX, imageY - orientationY, -orientationZ).normalize();
         // std::cout << direction.x << direction.y << direction.z << std::endl;
+
+        float lensRadius = aperture / 2;
+        Vec3 randomPointOnLens = randomInUnitDisc() * lensRadius;
+        Vec3 origin = position + randomPointOnLens;
+
+        direction = (direction * focusDistance - randomPointOnLens).normalize();
+
         return {position, direction};
     }
 
     Vec3 BasicCamera::getDirection(const Vec3& point) const {
         return (point - position).normalize();
+    }
+
+    Vec3 BasicCamera::randomInUnitDisc() const {
+        while (true) {
+            Vec3 p = Vec3::random(-1, 1);
+            double pMag = p.magnitude();
+            double pMagSq = pMag * pMag;
+            if (pMagSq >= 1) continue;
+            return p;
+        }
     }
 
 }

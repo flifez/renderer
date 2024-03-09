@@ -13,6 +13,38 @@ namespace Raytracer {
         return triangles[index];
     }
 
+    std::vector<Vec3> Mesh::getVertices() const {
+        std::vector<Vec3> vertices;
+        for (const auto& triangle : triangles) {
+            vertices.push_back(triangle.getV0());
+            vertices.push_back(triangle.getV1());
+            vertices.push_back(triangle.getV2());
+        }
+
+        return vertices;
+    }
+
+    AABB Mesh::getBoundingBox() const {
+        if (getVertices().empty()) {
+            return {};
+        }
+
+        Vec3 min = getVertices()[0];
+        Vec3 max = getVertices()[0];
+
+        for (const Vec3& vertex : getVertices()) {
+            min.x = std::min(min.x, vertex.x);
+            min.y = std::min(min.y, vertex.y);
+            min.z = std::min(min.z, vertex.z);
+
+            max.x = std::max(max.x, vertex.x);
+            max.y = std::max(max.y, vertex.y);
+            max.z = std::max(max.z, vertex.z);
+        }
+
+        return {min, max};
+    }
+
     int Mesh::numberOfTriangles() const {
         return triangles.size();
     }

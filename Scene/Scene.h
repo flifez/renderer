@@ -8,6 +8,7 @@
 #include "../Cameras/BasicCamera.h"
 #include "../Objects/Object.h"
 #include "../Lights/Light.h"
+#include "../Structures/BVH.h"
 
 namespace Raytracer {
 
@@ -15,8 +16,8 @@ namespace Raytracer {
     public:
         explicit Scene(const BasicCamera& camera) : camera(camera) {}
 
-        void addObject(std::shared_ptr<Object> object);
-        void addLight(std::shared_ptr<Light> light);
+        void addObject(const std::shared_ptr<Object>& object);
+        void addLight(const std::shared_ptr<Light>& light);
         void setAmbient(const Vec3& ambientColor, float ambientIntensity);
 
 
@@ -29,6 +30,7 @@ namespace Raytracer {
     private:
         BasicCamera camera;
         std::vector<std::shared_ptr<Object>> objects;
+        BVH bvh;
         std::vector<std::shared_ptr<Light>> lights;
         Vec3 ambientColor;
         float ambientIntensity;

@@ -5,11 +5,12 @@
 #include "Scene.h"
 
 namespace Raytracer {
-    void Scene::addObject(std::shared_ptr<Object> object) {
+    void Scene::addObject(const std::shared_ptr<Object>& object) {
         objects.push_back(object);
+        bvh.insert(object->getBoundingBox());
     }
 
-    void Scene::addLight(std::shared_ptr<Light> light) {
+    void Scene::addLight(const std::shared_ptr<Light>& light) {
         lights.push_back(light);
     }
 
@@ -35,10 +36,13 @@ namespace Raytracer {
 
     HitInfo Scene::findClosestIntersection(const Ray &ray, int depth) const {
         HitInfo closestHitInfo(INFINITY, Vec3(), Vec3(), nullptr, MAX_DEPTH);
-        for (std::shared_ptr<Object> object : objects) {
-            HitInfo hitInfo = object->intersect(ray, depth);
-            if (hitInfo.t < closestHitInfo.t) {
-                closestHitInfo = hitInfo;
+        if (bvh.intersect(ray))
+        {
+            for (std::shared_ptr<Object> object: objects) {
+                HitInfo hitInfo = object->intersect(ray, depth);
+                if (hitInfo.t < closestHitInfo.t) {
+                    closestHitInfo = hitInfo;
+                }
             }
         }
         return closestHitInfo;

@@ -28,6 +28,9 @@ namespace Raytracer {
             if (lineType == "v") {
                 Vec3 vertex;
                 lineStream >> vertex.x >> vertex.y >> vertex.z;
+
+                // std::cout << "Vertex: " << vertex.x << " " << vertex.y << " " << vertex.z << std::endl;
+
                 vertices.push_back(vertex);
             } else if (lineType == "f") {
                 std::string vertexToken;
