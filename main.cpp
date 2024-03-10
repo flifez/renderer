@@ -28,18 +28,18 @@ int main() {
     mesh.rotate(Raytracer::Vec3(3.14159, 0.9 * 3.14159, -3.14159/2.2));
 
     std::vector<Raytracer::Triangle> triangles;
-    triangles.emplace_back(Raytracer::Vec3(500, -10, 288.7),
-                       Raytracer::Vec3(0, -10, -577.3),
-                      Raytracer::Vec3(-500, 20, 288.7));
+    triangles.emplace_back(Raytracer::Vec3(0, -20, -577.3),
+                       Raytracer::Vec3(500, -20, 288.7),
+                      Raytracer::Vec3(-500, 10, 288.7));
     std::shared_ptr<Raytracer::Mesh> mesh1 = std::make_shared<Raytracer::Mesh>(triangles, &diffuseMaterial);
 
     std::shared_ptr<Raytracer::Mesh> bunny = std::make_shared<Raytracer::Mesh>(mesh);
 
     std::shared_ptr<Raytracer::SunLight> sunLight =
-            std::make_shared<Raytracer::SunLight>(Raytracer::Vec3(0, 0, 1), Raytracer::Vec3(1, 1, 1), 0.5);
+            std::make_shared<Raytracer::SunLight>(Raytracer::Vec3(0, 1, 0), Raytracer::Vec3(1, 1, 1), 0.5);
 
     std::shared_ptr<Raytracer::PointLight> pointLight =
-            std::make_shared<Raytracer::PointLight>(Raytracer::Vec3(0, -60, -60), Raytracer::Vec3(1, 1, 1), 30000.0);
+            std::make_shared<Raytracer::PointLight>(Raytracer::Vec3(30, -80, -80), Raytracer::Vec3(1, 1, 1), 30000.0);
 
     Raytracer::Vec3 position(-375, -40, -400);
     Raytracer::Vec3 orientation(1, 0, 1);
@@ -50,13 +50,14 @@ int main() {
     Raytracer::Scene scene(camera);
     scene.addObject(bunny);
     scene.addObject(mesh1);
+    scene.addLight(sunLight);
     scene.addLight(pointLight);
 
     scene.setAmbient(Raytracer::Vec3(1, 1, 1), 0.0);
 
     std::cout << "Scene built successfully. Starting rendering..." << std::endl;
 
-    Raytracer::Renderer renderer(400, 300, scene);
+    Raytracer::Renderer renderer(800, 600, scene);
     renderer.render();
 
     std::cout << "Finished Rendering.";

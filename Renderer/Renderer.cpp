@@ -4,9 +4,25 @@
 
 
 #include <random>
+#include <thread>
+#include <vector>
+#include <queue>
+#include <functional>
+#include <mutex>
+#include <condition_variable>
 #include "Renderer.h"
 
 namespace Raytracer {
+    std::mutex consoleMutex;
+    std::mutex queueMutex;
+    std::vector<std::thread> threads;
+    std::queue<std::function<void()>> tasks;
+    std::condition_variable condition;
+
+    const unsigned int NUM_THREADS = std::thread::hardware_concurrency();
+
+    bool all_tasks_submitted = false;
+
     Vec3 adjustGamma(const Vec3& color, float gamma = 2.2f) {
         float inverseGamma = 1.0f / gamma;
         return {pow(color.x, inverseGamma), pow(color.y, inverseGamma), pow(color.z, inverseGamma)};
@@ -24,44 +40,114 @@ namespace Raytracer {
         return distribution(generator);
     }
 
+    void displayProgressBar(unsigned int numThreads, int threadId, int progress, int total) {
+        int barWidth = 1200 / numThreads;
+
+        int lineNumber = 5 + threadId;
+
+        consoleMutex.lock();
+        std::cout << "\033[" << lineNumber << ";0H";
+        std::cout << "[";
+        int pos = barWidth * progress / total;
+        for (int i = 0; i < barWidth; i++) {
+            if (i < pos) std::cout << "=";
+            else if (i == pos) std::cout << ">";
+            else std::cout << " ";
+        }
+        std::cout << "]" << int(progress / (float)total * 100.0) << "% (thread " << threadId << ")";
+        std::cout.flush();
+        consoleMutex.unlock();
+    }
+
+    void worker(){
+        while (true) {
+            std::function<void()> task;
+            {
+                std::unique_lock<std::mutex> lock(queueMutex);
+
+                condition.wait(lock, [&]{ return !tasks.empty() || all_tasks_submitted; });
+                if (tasks.empty()) {
+                    return;
+                }
+                task = std::move(tasks.front());
+                tasks.pop();
+            }
+
+            task();
+        }
+    }
+
     void Renderer::render() const {
         int width = w;
         int height = h;
-        const int SAMPLES_PER_PIXEL = 4;
+        const int SAMPLES_PER_PIXEL = 8;
+        int sqrt_samples = sqrt(SAMPLES_PER_PIXEL);
 
         std::vector<unsigned char> pixels(width * height * 3);
 
-        for (int y = 0; y < height; y++) {
-            std::cout << "Rendering line " << y << " of " << height << std::endl;
+        auto render_section = [&](int start, int end, int threadId) {
+            const int ITERATIONS = 1;
+            const int SAMPLES_PER_PIXEL = 64;
 
-            for (int x = 0; x < width; x++) {
-                Vec3 color(0, 0, 0);
+            for (int iteration = 0; iteration < ITERATIONS; iteration++) {
+                for (int y = start; y < end; y++) {
 
-                for (int s = 0; s < SAMPLES_PER_PIXEL; s++) {
-                    float u = (x + random_float()) / (width - 1);
-                    float v = (y + random_float()) / (height - 1);
-                    Ray ray = scene.getCamera().generateRay(u, v);
-                    HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
+                    displayProgressBar(NUM_THREADS, threadId, y - start, end - start);
 
-                    if (hitInfo.material == nullptr) {
-                        color = color + scene.getAmbient();
-                    } else {
-                        color = color + calculateColor(ray, hitInfo);
+                    for (int x = 0; x < width; x++) {
+                        Vec3 color(0, 0, 0);
+
+                        for (int p = 0; p < sqrt_samples; p++) {
+                            for(int q = 0; q < sqrt_samples; q++) {
+                                float u = (x + (p + random_float()) / sqrt_samples) / (width - 1);
+                                float v = (y + (q + random_float()) / sqrt_samples) / (height - 1);
+                                Ray ray = scene.getCamera().generateRay(u, v);
+                                HitInfo hitInfo = scene.findClosestIntersection(ray, 0);
+
+                                if (hitInfo.material == nullptr) {
+                                    color = color + scene.getAmbient();
+                                } else {
+                                    color = color + calculateColor(ray, hitInfo);
+                                }
+                            }
+                        }
+
+                        color = color / float(SAMPLES_PER_PIXEL);
+
+                        // gamma correction
+                        color = adjustGamma(color, 1.0f);
+                        clampColor(color);
+
+                        // convert color from float to byte
+                        pixels[(y * width + x) * 3 + 0] += static_cast<unsigned char>(color.x * 255.99 / ITERATIONS);
+                        pixels[(y * width + x) * 3 + 1] += static_cast<unsigned char>(color.y * 255.99 / ITERATIONS);
+                        pixels[(y * width + x) * 3 + 2] += static_cast<unsigned char>(color.z * 255.99 / ITERATIONS);
                     }
                 }
-
-                color = color / float(SAMPLES_PER_PIXEL);
-
-                // gamma correction.
-                color = adjustGamma(color, 1.0f);
-
-                clampColor(color);
-
-                // convert color from float to byte
-                pixels[(y * width + x) * 3 + 0] = static_cast<unsigned char>(color.x * 255.99);
-                pixels[(y * width + x) * 3 + 1] = static_cast<unsigned char>(color.y * 255.99);
-                pixels[(y * width + x) * 3 + 2] = static_cast<unsigned char>(color.z * 255.99);
             }
+        };
+
+        // create threads
+        for (unsigned int i = 0; i < NUM_THREADS; i++) {
+            threads.emplace_back(worker);
+        }
+
+        for (unsigned int i = 0; i < NUM_THREADS; i++) {
+            int start = i * height / NUM_THREADS;
+            int end = (i + 1) * height / NUM_THREADS;
+
+            tasks.push([=]{
+                render_section(start, end, i);
+            });
+        }
+
+        all_tasks_submitted = true;
+
+        condition.notify_all();
+
+        // join threads
+        for (auto& thread : threads) {
+            thread.join();
         }
 
         stbi_write_png("image.png", width, height, 3, pixels.data(), width * 3);

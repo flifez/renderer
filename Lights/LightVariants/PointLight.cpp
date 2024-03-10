@@ -9,7 +9,7 @@
 
 namespace Raytracer {
     Vec3 PointLight::getDirection(const Vec3 &point) const {
-        return (position - point).normalize();
+        return -(position - point).normalize();
     }
 
     Vec3 PointLight::getIntensity(const Vec3 &point) const {
